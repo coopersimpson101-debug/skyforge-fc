@@ -1,0 +1,31 @@
+# build output
+build/
+*.o
+*.elf
+*.bin
+*.hex
+*.map
+*.exe
+*.dll
+*.so
+*.dylib
+*.pdb
+*.lib
+
+# python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# simulator logs / local plots (docs/img/ is tracked on purpose)
+*.csv
+/sim_*.png
+
+# editors / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

@@ -1,0 +1,33 @@
+# skyforge-fc example CLI script - paste line by line into a serial terminal
+# (115200 8N1 on the console UART) after sending '#'.
+# PROPS OFF for everything in this file.
+
+status
+get p_
+# 3" / 5" starting point (the defaults were tuned in the simulator only)
+set p_roll 55
+set i_roll 50
+set d_roll 45
+set f_roll 100
+set p_pitch 58
+set i_pitch 52
+set d_pitch 48
+set f_pitch 105
+# 4 kHz PID loop on an 8 kHz gyro (try 2000 if 'status' shows overruns)
+set pid_loop_hz 4000
+# EKF attitude estimator instead of Madgwick
+set ahrs_type 1
+# failsafe: level out and descend at 30 % for 5 s, then disarm
+set fs_procedure 1
+set fs_throttle 0.30
+set fs_land_time_s 5
+# motor checks, one by one, 2 s each, low throttle
+motor 1 0.05
+motor 2 0.05
+motor 3 0.05
+motor 4 0.05
+# reverse motor 3 if it spins the wrong way (DShot cmd 21), save in the ESC (12)
+# dshot 21 3
+# dshot 12 3
+save
+exit

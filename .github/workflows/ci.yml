@@ -1,0 +1,61 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  host-tests:
+    name: host unit tests + closed-loop sim (gcc)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytest
+      - name: C unit tests (math, filters, DShot, CRSF, AHRS, PID, mixer, IMU, FC, sim)
+        run: make test CC=gcc
+      - name: simulator shared library + ctypes tests
+        run: make sim-test CC=gcc PYTHON=python
+      - name: simulator scenarios
+        run: |
+          ./build/host/sim_main step
+          ./build/host/sim_main gust
+          ./build/host/sim_main failsafe
+
+  host-tests-clang:
+    name: host unit tests (zig cc / clang, -Werror)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install ziglang
+      - run: python tools/build.py test
+
+  firmware-gcc:
+    name: STM32F405 firmware (arm-none-eabi-gcc)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y gcc-arm-none-eabi
+      - run: make firmware
+      - uses: actions/upload-artifact@v4
+        with:
+          name: skyforge-f405-gcc
+          path: |
+            build/fw/skyforge-f405.elf
+            build/fw/skyforge-f405.bin
+
+  firmware-zig:
+    name: STM32F405 firmware (zig cc, thumb eabihf)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install ziglang
+      - run: python tools/build.py firmware

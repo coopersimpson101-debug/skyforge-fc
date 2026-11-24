@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="330" viewBox="0 0 1200 330" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+<rect width="1200" height="330" rx="10" fill="#0d1117"/>
+<text x="40" y="36" fill="#e6edf3" font-size="17" font-weight="bold">DShot600 frame for motor command 0.5 (idle 5.5 %) → throttle value 1102 → packet 0x89CD</text>
+<text x="40" y="60" fill="#8b949e" font-size="13">TIM8 @ 168 MHz: 280 ticks/bit = 1667 ns · "0" = CCR 105 (625 ns high) · "1" = CCR 210 (1250 ns high) · frame 26.67 µs</text>
+<path d="M43 92v-8H763v8" fill="none" stroke="#EF4444" stroke-width="1.5"/>
+<text x="403.0" y="78" fill="#EF4444" font-size="13" text-anchor="middle">11-bit throttle value</text>
+<path d="M769 92v-8H829v8" fill="none" stroke="#d29922" stroke-width="1.5"/>
+<text x="799.0" y="78" fill="#d29922" font-size="13" text-anchor="middle">T</text>
+<path d="M835 92v-8H1093v8" fill="none" stroke="#58a6ff" stroke-width="1.5"/>
+<text x="964.0" y="78" fill="#58a6ff" font-size="13" text-anchor="middle">CRC4</text>
+<rect x="40" y="114" width="66" height="92" fill="none" stroke="#161b22"/>
+<text x="73.0" y="226" fill="#e6edf3" font-size="15" text-anchor="middle">1</text>
+<text x="73.0" y="246" fill="#8b949e" font-size="11" text-anchor="middle">CCR 210</text>
+<rect x="106" y="114" width="66" height="92" fill="none" stroke="#161b22"/>
+<text x="139.0" y="226" fill="#e6edf3" font-size="15" text-anchor="middle">0</text>
+<text x="139.0" y="246" fill="#8b949e" font-size="11" text-anchor="middle">CCR 105</text>
+<rect x="172" y="114" width="66" height="92" fill="none" stroke="#161b22"/>
+<text x="205.0" y="226" fill="#e6edf3" font-size="15" text-anchor="middle">0</text>
+<text x="205.0" y="246" fill="#8b949e" font-size="11" text-anchor="middle">CCR 105</text>
+<rect x="238" y="114" width="66" height="92" fill="none" stroke="#161b22"/>
+<text x="271.0" y="226" fill="#e6edf3" font-size="15" text-anchor="middle">0</text>
+<text x="271.0" y="246" fill="#8b949e" font-size="11" text-anchor="middle">CCR 105</text>
+<rect x="304" y="114" width="66" height="92" fill="none" stroke="#161b22"/>
+<text x="337.0" y="226" fill="#e6edf3" font-size="15" text-anchor="middle">1</text>
+<text x="337.0" y="246" fill="#8b949e" font-size="11" text-anchor="middle">CCR 210</text>
+<rect x="370" y="114" width="66" height="92" fill="none" stroke="#161b22"/>
+<text x="403.0" y="226" fill="#e6edf3" font-size="15" text-anchor="middle">0</text>
+<text x="403.0" y="246" fill="#8b949e" font-size="11" text-anchor="middle">CCR 105</text>
+<rect x="436" y="114" width="66" height="92" fill="none" stroke="#161b22"/>
+<text x="469.0" y="226" fill="#e6edf3" font-size="15" text-anchor="middle">0</text>
+<text x="469.0" y="246" fill="#8b949e" font-size="11" text-anchor="middle">CCR 105</text>
+<rect x="502" y="114" width="66" height="92" fill="none" stroke="#161b22"/>
+<text x="535.0" y="226" fill="#e6edf3" font-size="15" text-anchor="middle">1</text>
+<text x="535.0" y="246" fill="#8b949e" font-size="11" text-anchor="middle">CCR 210</text>
+<rect x="568" y="114" width="66" height="92" fill="none" stroke="#161b22"/>
+<text x="601.0" y="226" fill="#e6edf3" font-size="15" text-anchor="middle">1</text>
+<text x="601.0" y="246" fill="#8b949e" font-size="11" text-anchor="middle">CCR 210</text>
+<rect x="634" y="114" width="66" height="92" fill="none" stroke="#161b22"/>
+<text x="667.0" y="226" fill="#e6edf3" font-size="15" text-anchor="middle">1</text>
+<text x="667.0" y="246" fill="#8b949e" font-size="11" text-anchor="middle">CCR 210</text>
+<rect x="700" y="114" width="66" height="92" fill="none" stroke="#161b22"/>
+<text x="733.0" y="226" fill="#e6edf3" font-size="15" text-anchor="middle">0</text>
+<text x="733.0" y="246" fill="#8b949e" font-size="11" text-anchor="middle">CCR 105</text>
+<rect x="766" y="114" width="66" height="92" fill="none" stroke="#161b22"/>
+<text x="799.0" y="226" fill="#e6edf3" font-size="15" text-anchor="middle">0</text>
+<text x="799.0" y="246" fill="#8b949e" font-size="11" text-anchor="middle">CCR 105</text>
+<rect x="832" y="114" width="66" height="92" fill="none" stroke="#161b22"/>
+<text x="865.0" y="226" fill="#e6edf3" font-size="15" text-anchor="middle">1</text>
+<text x="865.0" y="246" fill="#8b949e" font-size="11" text-anchor="middle">CCR 210</text>
+<rect x="898" y="114" width="66" height="92" fill="none" stroke="#161b22"/>
+<text x="931.0" y="226" fill="#e6edf3" font-size="15" text-anchor="middle">1</text>
+<text x="931.0" y="246" fill="#8b949e" font-size="11" text-anchor="middle">CCR 210</text>
+<rect x="964" y="114" width="66" height="92" fill="none" stroke="#161b22"/>
+<text x="997.0" y="226" fill="#e6edf3" font-size="15" text-anchor="middle">0</text>
+<text x="997.0" y="246" fill="#8b949e" font-size="11" text-anchor="middle">CCR 105</text>
+<rect x="1030" y="114" width="66" height="92" fill="none" stroke="#161b22"/>
+<text x="1063.0" y="226" fill="#e6edf3" font-size="15" text-anchor="middle">1</text>
+<text x="1063.0" y="246" fill="#8b949e" font-size="11" text-anchor="middle">CCR 210</text>
+<path d="M20 200H40V120H89.5V200H106V120H130.8V200H172V120H196.8V200H238V120H262.8V200H304V120H353.5V200H370V120H394.8V200H436V120H460.8V200H502V120H551.5V200H568V120H617.5V200H634V120H683.5V200H700V120H724.8V200H766V120H790.8V200H832V120H881.5V200H898V120H947.5V200H964V120H988.8V200H1030V120H1079.5V200H1096H1162.0" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-linejoin="round"/>
+<text x="1102" y="160" fill="#8b949e" font-size="11">2 zero</text>
+<text x="1102" y="174" fill="#8b949e" font-size="11">slots</text>
+<text x="40" y="306" fill="#8b949e" font-size="12">Drawn from dshot_value_from_motor(), dshot_encode(), dshot_timing() and dshot_fill_ccr() in src/core/dshot.c (docs/assets/dshot_dump.c). Not a scope capture.</text>
+</svg>

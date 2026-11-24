@@ -1,0 +1,46 @@
+name: Bug report
+description: Something does not work as documented
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report! For security problems please do **not** use this form; see SECURITY.md.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Commands, config or a minimal script. Paste logs as text, not screenshots.
+      render: shell
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where does it happen?
+      options:
+        - Host tests / simulator
+        - Real hardware
+        - Build / CI
+        - Documentation
+    validations:
+      required: true
+  - type: input
+    id: area
+    attributes:
+      label: Area
+      placeholder: "estimator / control / mixer / DShot / CRSF / IMU driver / CLI / simulator / build"
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      placeholder: "Host OS, compiler (gcc / zig cc version), board, IMU, ESC and receiver (if on hardware); commit hash"
+    validations:
+      required: true

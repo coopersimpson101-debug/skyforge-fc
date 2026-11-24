@@ -1,37 +1,133 @@
-# skyforge-fc
+<p align="center">
+  <img src="docs/assets/banner.svg" alt="skyforge-fc: bare-metal STM32F405 flight controller for 5-inch FPV quads" width="100%">
+</p>
 
-**Bare-metal flight controller firmware for 5" FPV quads, written from scratch for the STM32F405.**
-No HAL, no CubeMX, no Betaflight code. The attitude estimators (Madgwick and an
-error-state EKF), the cascaded PID loops, the mixer, the DShot encoder and the
-CRSF/ExpressLRS parser are all written by hand. The same flight code runs in a
-closed-loop rigid-body simulator and in 9 host test binaries.
+<p align="center">
+  <a href="https://github.com/coopersimpson101-debug/skyforge-fc/actions/workflows/ci.yml"><img src="https://github.com/coopersimpson101-debug/skyforge-fc/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
+  <img src="https://img.shields.io/badge/language-C11-555555?logo=c" alt="C11">
+  <img src="https://img.shields.io/badge/MCU-STM32F405%20%C2%B7%20Cortex--M4F-03234B?logo=stmicroelectronics&logoColor=white" alt="STM32F405, Cortex-M4F">
+  <img src="https://img.shields.io/badge/HAL-none%20(bare%20metal)-EF4444" alt="no HAL, bare metal">
+  <img src="https://img.shields.io/badge/flash-42.5%20KB-informational" alt="flash 42.5 KB">
+  <img src="https://img.shields.io/badge/flight%20tested-not%20yet-lightgrey" alt="flight tested: not yet">
+</p>
 
-[![ci](../../actions/workflows/ci.yml/badge.svg)](../../actions/workflows/ci.yml)
+**Bare-metal flight controller firmware for 5" FPV quads, written from scratch for the STM32F405, with
+no HAL, no CubeMX and no Betaflight code.** The estimators, cascaded PID loops, mixer, DShot encoder and
+CRSF/ExpressLRS parser are all hand-written. The same flight code runs in a closed-loop rigid-body
+simulator and in 9 host test binaries.
 
-> ## ⚠️ Safety first: PROPS OFF
-> This firmware has **not flown yet** (see [Honest status](#honest-status)). A quad with
-> props on can cause serious injury. Do every bench test with the **propellers removed**,
-> the quad held down, and a current-limited supply or smoke stopper. Keep the arm switch
-> reachable and stay clear of the motors. The first hover should be in a net or a large
-> empty space, low and in angle mode, with a failsafe you have already tested.
+<p align="center">
+  <a href="#quickstart">Quickstart</a> ·
+  <a href="#how-it-works">How it works</a> ·
+  <a href="#results">Results</a> ·
+  <a href="#roadmap">Roadmap</a> ·
+  <a href="docs/estimation_and_control.md">Estimation &amp; control notes</a> ·
+  <a href="docs/protocols.md">Protocol notes</a>
+</p>
+
+<p align="center">
+  <img src="docs/assets/sim_hero.png" alt="Simulated roll-rate step response, gust recovery with Madgwick and EKF, and motor outputs during the gust" width="100%"><br>
+  <sub><b>Simulation, not flight data.</b> The real <code>src/core</code> flight code runs in the rigid-body model
+  (<code>sim/quad_sim.c</code>) through the ctypes bindings: an acro roll-rate step (t90 41 ms, 17 % overshoot),
+  angle-mode recovery from a 150 ms torque gust with both estimators, and the mixer outputs during the gust.
+  Regenerate with <a href="docs/assets/make_figures.py"><code>docs/assets/make_figures.py</code></a>.</sub>
+</p>
+
+> [!WARNING]
+> **Props off.** This firmware has **not flown yet** (see [Project status](#project-status)). A quad with
+> props on can cause serious injury. Do every bench test with the **propellers removed**, the quad held
+> down, and a current-limited supply or smoke stopper. Keep the arm switch reachable and stay clear of the
+> motors. The first hover should be in a net or a large empty space, low and in angle mode, with a failsafe
+> you have already tested.
+
+## Highlights
+
+- 🧭 **Two attitude estimators, selectable at runtime**: Madgwick with a hand-derived Jacobian, and a
+  6-state multiplicative error-state **EKF** (Joseph update, chi-square gating) that estimates gyro bias online.
+- 🎛️ **Cascaded control**: quaternion angle loop → 3-axis rate PID (D on measurement, feed-forward,
+  anti-windup, TPA) → quad-X mixer with airmode and desaturation, at an 8 kHz gyro / 4 kHz PID rate.
+- ⚡ **DShot150/300/600 via TIM8 + DMA burst**: one DMA stream drives all four motors. All 4096
+  encodings round-trip, and every 1-bit error is detected in the tests.
+- 📡 **CRSF/ELRS receiver**: byte-wise parser, CRC-8/DVB-S2, 16 × 11-bit channels, link stats and
+  telemetry frames back to the radio.
+- 🧱 **Truly bare metal**: hand-written register map, vector table, 168 MHz PLL clock tree, `-nostdlib`.
+  The image is **42.5 KB of flash and 11.7 KB of static RAM**.
+- 🧪 **55 host tests / 8,389 checks in 9 binaries**, plus a 6-DOF closed-loop simulator (motor lag,
+  drag, gyro bias/noise) that runs the real `fc.c`.
+- 🔁 **CI on every push**: gcc and zig/clang host tests, simulator scenarios, and firmware builds with
+  both `arm-none-eabi-gcc` and `zig cc`.
+
+## Quickstart
+
+```bash
+git clone https://github.com/coopersimpson101-debug/skyforge-fc && cd skyforge-fc
+pip install ziglang pytest              # zig ships clang + lld and cross-compiles to ARM
+python tools/build.py test              # 9 C test binaries (host, -Werror)
+python tools/build.py sim && ./build/host/sim_main step
+python tools/build.py firmware          # build/fw/skyforge-f405.elf + .bin
+```
+
+## Project status
+
+| Area | Status |
+|---|---|
+| Core flight code (math, filters, estimators, PID, mixer, protocols, arming, failsafe, CLI, config) | ✅ implemented, unit-tested on the host, all tests pass |
+| Firmware build (Cortex-M4F hard-float, `-nostdlib`) | ✅ builds with zig cc here and with zig cc + arm-none-eabi-gcc in CI; image layout checked |
+| Closed-loop behaviour (step, gust, failsafe, airmode) | 🧪 simulated only (idealised motors, no prop wash, no frame resonance) |
+| IMU drivers (MPU6000, ICM-42688-P) | 🧪 tested against a register-level SPI **mock**, not real silicon |
+| Register-level drivers (clock, SPI, UART, TIM8 + DMA, flash, EXTI) | ⏳ written against RM0090, never run on hardware |
+| DShot timing on a scope, ESC bench test, failsafe bench test | ⏳ needs hardware (see [Hardware validation](#hardware-validation--todo-for-the-author)) |
+| Flight | ⏳ **has not flown** |
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <h3>🎥 Flight video: coming soon</h3>
+      <p>No flight footage exists yet: the firmware has not flown.<br>
+      The first hover (angle mode, in a net) will be posted here after the bench
+      checklist below is complete.</p>
+    </td>
+    <td align="center" width="50%">
+      <h3>📈 Blackbox logs: coming soon</h3>
+      <p>Gyro vs setpoint, motor outputs and PID terms from a real flight will go here.
+      Until then, every plot in this README is from the simulator.</p>
+    </td>
+  </tr>
+</table>
 
 ---
 
-## Contents
-- [What's inside](#whats-inside)
-- [Architecture](#architecture)
-- [How it works](#how-it-works)
-- [Build, test, run](#build-test-run)
-- [Flashing](#flashing)
-- [CLI](#cli-configuration-over-uart)
-- [Results (measured on this machine / in simulation)](#results)
-- [Hardware validation: TODO for the author](#hardware-validation--todo-for-the-author)
-- [Bench test procedure](#bench-test-procedure)
-- [Tuning guide](#tuning-guide)
-- [Roadmap](#roadmap)
-- [Honest status](#honest-status)
+## How it works
 
-## What's inside
+```mermaid
+flowchart LR
+    STK[sticks<br/>CRSF 16 ch] --> RC[rates, arming,<br/>failsafe]
+    RC -->|angle mode: roll/pitch| QD[q_des]
+    QD --> AE["angle loop<br/>q_e = q⁻¹ ⊗ q_des<br/>ω_sp = angle_p · rotvec(q_e)"]
+    RC -->|acro / yaw: rate sp| RP
+    AE --> RP["rate PID ×3<br/>P · I (anti-windup) · D on meas · FF · TPA"]
+    RP --> MX[quad-X mixer<br/>airmode / desat]
+    MX --> DS[DShot600<br/>TIM8 + DMA] --> ESC((ESC + motors))
+    ESC -.-> PLANT[quad dynamics]
+    PLANT -.->|8 kHz gyro + accel| FLT[notch + biquad LPF]
+    FLT --> EST[Madgwick or EKF<br/>quaternion q]
+    EST -->|q| AE
+    FLT -->|ω filtered| RP
+```
+
+<p align="center">
+  <img src="docs/assets/dshot600.svg" alt="DShot600 bit timing of one frame for motor command 0.5, generated from the real encoder" width="100%"><br>
+  <sub>One DShot600 frame as the real encoder emits it: <code>dshot_value_from_motor(0.5, idle 5.5 %)</code> → value 1102 →
+  packet 0x89CD → 16 compare values for TIM8 at 168 MHz. Drawn from the program output (not a scope capture).</sub>
+</p>
+
+<details>
+<summary><b>Simulator output, as captured from the terminal</b></summary>
+<p align="center"><img src="docs/assets/sim_terminal.svg" alt="Captured output of sim_main step, gust, gust with EKF and failsafe" width="100%"></p>
+</details>
+
+### What's inside
 
 | Area | Implementation | Where |
 |---|---|---|
@@ -58,7 +154,7 @@ It also builds for the host (`-DFC_HOST`), which is how it is unit-tested. The
 firmware links with `-nostdlib`. The only runtime it carries is the four memory
 routines in `libc_min.c`.
 
-## Architecture
+### Architecture
 
 ```mermaid
 flowchart LR
@@ -96,7 +192,7 @@ EXTI4 (data ready) -> flag -> main loop: SPI read 14 B -> fc_gyro_sample()
 background (between samples): CRSF bytes -> parser | CLI chars | telemetry 10 Hz | LED 20 Hz
 ```
 
-## How it works
+### The maths in brief
 
 The full derivations are in [`docs/estimation_and_control.md`](docs/estimation_and_control.md)
 and [`docs/protocols.md`](docs/protocols.md). The short version:
@@ -239,9 +335,14 @@ simulator**. None come from a real quad.
 | Link loss in hover (LAND, 3 s) | levelled (max tilt < 5°), disarmed after land time, no re-arm with switch on | pass |
 | Estimator error during the acro step | max |true − estimated roll| | 0.37° |
 
-![sim step](docs/img/sim_step.png)
-![sim gust](docs/img/sim_gust.png)
-![sim failsafe](docs/img/sim_failsafe.png)
+<details>
+<summary><b>Per-scenario simulator plots (step, gust, failsafe)</b></summary>
+
+![Simulated acro roll-rate step](docs/img/sim_step.png)
+![Simulated angle-mode gust recovery](docs/img/sim_gust.png)
+![Simulated failsafe landing](docs/img/sim_failsafe.png)
+
+</details>
 
 The gust plot shows a slow ~1° residual after recovery. That residual is real
 simulator physics, not a bug in the plot. After the gust the quad keeps a sideways
@@ -258,8 +359,12 @@ estimator notes in the docs.
 
 ## Hardware validation / TODO for the author
 
-**Nothing in this section has been done yet.** These are the steps, with the exact commands
-and empty tables to fill in. Please don't fill them from the simulator.
+> [!NOTE]
+> ⏳ **Nothing in this section has been done yet.** These are the steps, with the exact commands and
+> empty tables to fill in with real measurements. Please don't fill them from the simulator.
+
+<details>
+<summary><b>Bring-up checklist and empty result tables (8 steps)</b></summary>
 
 1. **Boot and clocks.** Flash, open the console (`screen /dev/ttyUSB0 115200`), check the
    boot banner for `HSE 8 MHz, 168 MHz`. Check SysTick against a stopwatch.
@@ -303,7 +408,12 @@ Flight log slots:
 |---|---|---|---|---|
 | | | | | |
 
+</details>
+
 ## Bench test procedure
+
+> [!CAUTION]
+> Every step until step 7 is done with the **propellers removed**.
 
 1. **Props off.** Use a smoke stopper or a current-limited bench supply for the first power-up.
 2. Power over USB-UART only (no battery). Check the boot banner, `status` and the IMU
@@ -357,18 +467,6 @@ F 100/105/90). They are a starting point for a 5" quad. Expect to retune on the 
 - [ ] `src/platform/stm32f7` + `boards/f722_*`, `src/platform/stm32h7` + `boards/h743_*`
 - [ ] Throttle linearisation / thrust curve, RC smoothing, iterm-relax
 
-## Honest status
-
-| Claim | Status |
-|---|---|
-| Core flight code (math, filters, estimators, PID, mixer, protocols, arming, failsafe, CLI, config) | implemented; unit-tested on the host; all tests pass |
-| IMU drivers | tested against a register-level **mock**, not real silicon |
-| Closed-loop behaviour | verified in the **simulator only** (idealised motors, no prop wash, no frame resonance) |
-| Firmware build | cross-compiles with zig cc (Cortex-M4F, `-nostdlib`) to `.elf`/`.bin`; image layout checked |
-| arm-none-eabi-gcc Makefile and gcc host build | written for CI (`.github/workflows/ci.yml`), **not run on the dev machine** (no gcc/make installed there) |
-| Register-level drivers (clock, SPI, UART, TIM8+DMA, flash, EXTI) | written against RM0090, **never run on hardware** |
-| Flight | **has not flown.** See the hardware TODO list above |
-
 ## Repository layout
 
 ```
@@ -382,8 +480,15 @@ sim/             rigid-body simulator, CLI, ctypes bindings, plotting
 tests/           C unit tests (tinytest.h) + pytest
 tools/           build.py (zig cc driver), reference-vector generator
 docs/            protocol + estimation/control write-ups, sim plots
+docs/assets/     README banner + figures and the script that generates them
 examples/        CLI bench script, simulator tuning sweep
 ```
+
+## Contributing, security, citation
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Report safety-relevant bugs (for example anything that can spin
+motors while disarmed) privately, as described in [SECURITY.md](SECURITY.md). To cite this project, see
+[CITATION.cff](CITATION.cff).
 
 ## License
 

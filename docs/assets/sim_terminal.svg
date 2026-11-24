@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="258" viewBox="0 0 980 258">
+<rect width="980" height="258" rx="10" fill="#0d1117" stroke="#30363d"/>
+<rect width="980" height="34" rx="10" fill="#161b22"/><rect y="24" width="980" height="10" fill="#161b22"/>
+<circle cx="20" cy="17" r="6" fill="#ff5f56"/><circle cx="40" cy="17" r="6" fill="#ffbd2e"/><circle cx="60" cy="17" r="6" fill="#27c93f"/>
+<text x="490.0" y="22" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" text-anchor="middle">skyforge-fc simulator (sim_main)</text>
+<g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15">
+<text x="20" y="60" fill="#e6edf3"><tspan fill="#EF4444">$</tspan> ./build/host/sim_main step</text>
+<text x="20" y="82" fill="#8b949e">roll rate step: setpoint 207 dps, t90 42.0 ms (incl. RC latency), overshoot 17.0 %</text>
+<text x="20" y="104" fill="#e6edf3"><tspan fill="#EF4444">$</tspan> ./build/host/sim_main gust</text>
+<text x="20" y="126" fill="#8b949e">gust: peak roll 28.6 deg, after 1.5 s roll -1.13 pitch 0.41 deg</text>
+<text x="20" y="148" fill="#e6edf3"><tspan fill="#EF4444">$</tspan> ./build/host/sim_main gust ahrs_type=1</text>
+<text x="20" y="170" fill="#8b949e">gust: peak roll 29.3 deg, after 1.5 s roll 1.06 pitch -0.76 deg</text>
+<text x="20" y="192" fill="#e6edf3"><tspan fill="#EF4444">$</tspan> ./build/host/sim_main failsafe</text>
+<text x="20" y="214" fill="#8b949e">failsafe: armed=0 fs_state=2 alt=-0.00 m</text>
+<text x="20" y="236" fill="#EF4444">$ <tspan fill="#e6edf3">_</tspan></text>
+</g>
+</svg>

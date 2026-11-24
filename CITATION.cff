@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "skyforge-fc: bare-metal STM32F405 flight controller firmware"
+authors:
+  - name: "the skyforge-fc authors"
+repository-code: "https://github.com/coopersimpson101-debug/skyforge-fc"
+license: MIT
+abstract: >-
+  Bare-metal flight controller firmware for 5-inch FPV quadcopters on the STM32F405:
+  Madgwick and error-state EKF attitude estimation, cascaded PID control, a quad-X mixer,
+  DShot and CRSF protocols, and a closed-loop rigid-body simulator that runs the same flight code.
+keywords:
+  - flight controller
+  - STM32
+  - embedded
+  - control systems
+  - EKF
+  - DShot
+  - CRSF
+  - quadcopter

@@ -9,8 +9,8 @@ jobs:
     name: host unit tests + closed-loop sim (gcc)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - run: pip install pytest
@@ -28,8 +28,8 @@ jobs:
     name: host unit tests (zig cc / clang, -Werror)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - run: pip install ziglang
@@ -39,10 +39,10 @@ jobs:
     name: STM32F405 firmware (arm-none-eabi-gcc)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: sudo apt-get update && sudo apt-get install -y gcc-arm-none-eabi
       - run: make firmware
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: skyforge-f405-gcc
           path: |
@@ -53,8 +53,8 @@ jobs:
     name: STM32F405 firmware (zig cc, thumb eabihf)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - run: pip install ziglang

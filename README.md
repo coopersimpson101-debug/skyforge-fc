@@ -4,6 +4,7 @@
 
 <p align="center">
   <a href="https://github.com/coopersimpson101-debug/skyforge-fc/actions/workflows/ci.yml"><img src="https://github.com/coopersimpson101-debug/skyforge-fc/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+[![Release](https://img.shields.io/github/v/release/coopersimpson101-debug/skyforge-fc?color=EF4444&label=release)](https://github.com/coopersimpson101-debug/skyforge-fc/releases/latest)
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
   <img src="https://img.shields.io/badge/language-C11-555555?logo=c" alt="C11">
   <img src="https://img.shields.io/badge/MCU-STM32F405%20%C2%B7%20Cortex--M4F-03234B?logo=stmicroelectronics&logoColor=white" alt="STM32F405, Cortex-M4F">
